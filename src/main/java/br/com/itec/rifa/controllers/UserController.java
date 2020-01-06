@@ -1,6 +1,7 @@
 package br.com.itec.rifa.controllers;
 
 import br.com.itec.rifa.dto.UserLoginDto;
+import br.com.itec.rifa.dto.UserRequestLoginDto;
 import br.com.itec.rifa.models.Status;
 import br.com.itec.rifa.models.User;
 import br.com.itec.rifa.repositories.StatusRepository;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User userRequest) {
+    public ResponseEntity<?> login(@RequestBody UserRequestLoginDto userRequest) {
 
         User user = userRepository.findByEmail(userRequest.getEmail());
 
@@ -56,15 +57,17 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody UserRequestLoginDto userRequestLoginDto) {
 
-        if (userRepository.findByEmail(user.getEmail()) != null) return new ResponseEntity<>(HttpStatus.FOUND);
-
+        if (userRepository.findByEmail(userRequestLoginDto.getEmail()) != null) return new ResponseEntity<>(HttpStatus.FOUND);
+        User user = new User();
+        mapper.map(userRequestLoginDto, user);
         Status status = statusRepository.findByTag("ATIVO");
         user.setStatus(status);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setCreateDate(new Date());
         user.setUpdateDate(new Date());
+        user.setCredits(new Long(0));
         userRepository.save(user);
 
         return new ResponseEntity<>(jwtService.encode(user), HttpStatus.OK);

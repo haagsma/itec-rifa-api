@@ -48,9 +48,10 @@ public class JwtService {
             DecodedJWT decodedJWT = jwtVerifier.verify(token.replace("Bearer ", ""));
 
             if (decodedJWT != null) return new UsernamePasswordAuthenticationToken(decodedJWT.getClaim("email"), null, Collections.emptyList());
-        } else {
-            throw new IllegalArgumentException("Token não pode ser nulo!");
         }
+//        else {
+//            throw new IllegalArgumentException("Token não pode ser nulo!");
+//        }
         return null;
     }
 }

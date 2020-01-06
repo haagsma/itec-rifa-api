@@ -29,13 +29,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                ServletResponse response,
                FilterChain filterChain
        ) throws IOException, ServletException {
+           HttpServletRequest req = (HttpServletRequest) request;
            try {
                Authentication authentication = JwtService.verifyRequest((HttpServletRequest) request);
                SecurityContextHolder.getContext().setAuthentication(authentication);
                filterChain.doFilter(request, response);
            } catch (Exception e) {
                e.printStackTrace();
-               HttpServletRequest req = (HttpServletRequest) request;
+
                logger.warn("Token inválido: " + e + "\nPath: " + req.getRequestURI());
                HttpServletResponse res = (HttpServletResponse) response;
                res.sendError(HttpServletResponse.SC_UNAUTHORIZED);

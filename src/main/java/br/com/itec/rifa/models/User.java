@@ -1,9 +1,8 @@
 package br.com.itec.rifa.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,7 +28,12 @@ public class User implements Serializable {
     private Long id;
     private String name;
     private String email;
+
+    @JsonIgnore
     private String password;
+
+    @Column(columnDefinition = "int default 0")
+    private Long credits;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id")
@@ -95,5 +99,13 @@ public class User implements Serializable {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public Long getCredits() {
+        return credits;
+    }
+
+    public void setCredits(Long credits) {
+        this.credits = credits;
     }
 }
