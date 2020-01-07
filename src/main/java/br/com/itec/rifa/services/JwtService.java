@@ -1,12 +1,15 @@
 package br.com.itec.rifa.services;
 
+import br.com.itec.rifa.filters.JwtAuthenticationFilter;
 import br.com.itec.rifa.models.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.apache.log4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,8 @@ import java.util.Collections;
 
 @Service
 public class JwtService {
+
+    private static Logger logger = Logger.getLogger(JwtService.class);
 
     private static String secret = "secreto6@";
     Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -38,7 +43,7 @@ public class JwtService {
         return jwtVerifier.verify(token);
     }
 
-    public static Authentication verifyRequest(HttpServletRequest request) throws IllegalAccessException {
+    public static Authentication verifyRequest(HttpServletRequest request) throws JWTDecodeException {
         String token = request.getHeader("Authorization");
 
         if (token != null) {
@@ -49,9 +54,6 @@ public class JwtService {
 
             if (decodedJWT != null) return new UsernamePasswordAuthenticationToken(decodedJWT.getClaim("email"), null, Collections.emptyList());
         }
-//        else {
-//            throw new IllegalArgumentException("Token não pode ser nulo!");
-//        }
         return null;
     }
 }

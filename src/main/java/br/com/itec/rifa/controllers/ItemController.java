@@ -2,18 +2,25 @@ package br.com.itec.rifa.controllers;
 
 import br.com.itec.rifa.models.Item;
 import br.com.itec.rifa.services.ItemService;
+import br.com.itec.rifa.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/item")
@@ -22,6 +29,9 @@ public class ItemController {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private TicketService ticketService;
 
     @GetMapping("")
     public ResponseEntity<?> getList(Pageable pageable) {
@@ -35,20 +45,36 @@ public class ItemController {
 
     @GetMapping("/sortear/{id}")
     public ResponseEntity<?> sortear(@PathVariable Long id) {
-        // @TODO
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        Item item = itemService.sorteio(id);
+
+        if (item == null) return new ResponseEntity<>("Item já foi sorteado!", HttpStatus.OK);
+
+        return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
     @PostMapping("/upload")
     public ResponseEntity<?> upload(@RequestParam("item") Long id, @RequestParam("file") List<MultipartFile> multipartFile) throws Exception {
-        multipartFile.forEach(img -> {
+        List<String> errors = new ArrayList<>();
+        for (MultipartFile img: multipartFile) {
             try {
-                itemService.uploadItem(id, img);
+                if (!itemService.uploadItem(id, img)) errors.add(img.getOriginalFilename());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
-        return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(errors, HttpStatus.OK);
+    }
+    @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> getImage(@PathVariable("id") Long id, HttpServletRequest request) throws MalformedURLException {
+        Resource resource = itemService.loadImg(id);
+        String contentType = "image/png";
+
+        if (resource == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
     }
 
 }

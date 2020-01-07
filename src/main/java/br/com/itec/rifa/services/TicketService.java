@@ -51,7 +51,7 @@ public class TicketService {
     }
 
     public Boolean verifyCanBuyTicket(Item item) {
-        return ticketRepository.countByItem(item) <= item.getMaxPeople();
+        return ticketRepository.countByItem(item) < item.getMaxPeople();
     }
 
     public List<Ticket> getTicketsByUser(Long id) {

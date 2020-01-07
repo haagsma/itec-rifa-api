@@ -19,4 +19,7 @@ public interface TicketRepository extends CrudRepository<Ticket, Long> {
     @Query(value = "SELECT MAX(t.num) FROM Ticket t WHERE t.item = :item")
     Integer findMaxByItem(@Param("item") Item item);
 
+    @Query(value = "SELECT user_id FROM ticket where item_id = :id ORDER BY RAND() LIMIT 1",
+            nativeQuery = true)
+    Long sortTicket(@Param("id") Long id);
 }
