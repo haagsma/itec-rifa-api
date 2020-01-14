@@ -37,8 +37,8 @@ public class UserController {
     public ResponseEntity<?> getUsers() {
         System.out.println("getUsers");
         List<User> userList = userRepository.findForName();
-        for (User user: userList) System.out.println(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+        System.out.println("-----------------------------");
+        return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -67,7 +67,7 @@ public class UserController {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setCreateDate(new Date());
         user.setUpdateDate(new Date());
-        user.setCredits(new Long(0));
+        user.setCredits(0L);
         userRepository.save(user);
 
         return new ResponseEntity<>(jwtService.encode(user), HttpStatus.OK);

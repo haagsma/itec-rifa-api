@@ -45,6 +45,7 @@ public class JwtService {
 
     public static Authentication verifyRequest(HttpServletRequest request) throws JWTDecodeException {
         String token = request.getHeader("Authorization");
+        logger.info("Token: " + token);
 
         if (token != null) {
             JWTVerifier jwtVerifier = JWT.require(algorithm2)
