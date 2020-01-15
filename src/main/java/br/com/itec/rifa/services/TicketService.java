@@ -1,5 +1,6 @@
 package br.com.itec.rifa.services;
 
+import br.com.itec.rifa.dto.BuyTicketResponseDto;
 import br.com.itec.rifa.models.Item;
 import br.com.itec.rifa.models.Ticket;
 import br.com.itec.rifa.models.User;
@@ -27,17 +28,17 @@ public class TicketService {
     @Autowired
     private ItemRepository itemRepository;
 
-    public String buyTicket(User user, Item item) {
+    public BuyTicketResponseDto buyTicket(User user, Item item) {
 
         user = userRepository.findById(user.getId()).get();
         item = itemRepository.findById(item.getId()).get();
 
-        if (!verifyCanBuyTicket(item)) return "Limite de participantes atingido!";
+        if (!verifyCanBuyTicket(item)) return new BuyTicketResponseDto("Limite de participantes atingido!", false);
 
-        if (!creditsService.debitCredits(user, item.getPrice())) return "Saldo insuficiente!";
+        if (!creditsService.debitCredits(user, item.getPrice())) return new BuyTicketResponseDto("Saldo insuficiente!", false);
 
         Integer max = ticketRepository.findMaxByItem(item);
-
+        user = userRepository.findById(user.getId()).get();
         System.out.println(max);
         Ticket ticket = new Ticket();
         ticket.setItem(item);
@@ -47,14 +48,19 @@ public class TicketService {
 
         ticketRepository.save(ticket);
 
-        return "Desejamos boa sorte, o numero do seu ticket é " + ticket.getNum() + " !";
+        return new BuyTicketResponseDto("Desejamos boa sorte, o numero do seu ticket é " + ticket.getNum() + " !", true, user.getCredits());
     }
 
     public Boolean verifyCanBuyTicket(Item item) {
         return ticketRepository.countByItem(item) < item.getMaxPeople();
     }
 
-    public List<Ticket> getTicketsByUser(Long id) {
-        return ticketRepository.findByUserId(id);
+    public List<Ticket> getTicketsByUser(Long id, String active) {
+        if (active.equals("ativos")) {
+            return ticketRepository.findByUserIdAndItemStatusTag(id, "EM_SORTEIO");
+        } else {
+            return ticketRepository.findByUserId(id);
+        }
+
     }
 }

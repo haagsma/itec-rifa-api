@@ -1,6 +1,7 @@
 package br.com.itec.rifa.controllers;
 
 import br.com.itec.rifa.dto.BuyTicketRequestDto;
+import br.com.itec.rifa.dto.BuyTicketResponseDto;
 import br.com.itec.rifa.services.CreditsService;
 import br.com.itec.rifa.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,12 @@ public class TicketController {
     @PostMapping("/buy")
     @Transactional
     public ResponseEntity<?> buyTicket(@RequestBody BuyTicketRequestDto buyTicketRequestDto) {
-        String res = ticketService.buyTicket(buyTicketRequestDto.getUser(), buyTicketRequestDto.getItem());
+        BuyTicketResponseDto res = ticketService.buyTicket(buyTicketRequestDto.getUser(), buyTicketRequestDto.getItem());
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<?> getTicketsByUser(@PathVariable Long id) {
-        return new ResponseEntity<>(ticketService.getTicketsByUser(id), HttpStatus.OK);
+    public ResponseEntity<?> getTicketsByUser(@PathVariable Long id, @RequestParam String active) {
+        return new ResponseEntity<>(ticketService.getTicketsByUser(id, active), HttpStatus.OK);
     }
 }

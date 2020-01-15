@@ -16,6 +16,8 @@ public interface TicketRepository extends CrudRepository<Ticket, Long> {
 
     List<Ticket> findByUserId(Long id);
 
+    List<Ticket> findByUserIdAndItemStatusTag(Long id, String tag);
+
     @Query(value = "SELECT MAX(t.num) FROM Ticket t WHERE t.item = :item")
     Integer findMaxByItem(@Param("item") Item item);
 
