@@ -21,6 +21,7 @@ public class WebSecutiryConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/login").permitAll()
                 .antMatchers("/user/register").permitAll()
                 .antMatchers("/item/image/*").permitAll()
+                .antMatchers("/user/image/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterAfter(new JwtAuthenticationFilter(), BasicAuthenticationFilter.class);

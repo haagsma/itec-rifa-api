@@ -13,6 +13,8 @@ public class UserDto {
     private String email;
     private StatusDto status;
 
+    public UserDto() {}
+
     public UserDto(User user) {
         this.id = user.getId();
         this.name = user.getName();

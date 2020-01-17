@@ -14,4 +14,5 @@ public class UserLoginDto {
     private Date createDate;
     private Date updateDate;
     private String token;
+    private Long credits;
 }

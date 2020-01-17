@@ -39,8 +39,8 @@ public class ItemService {
     @Autowired
     private UserRepository userRepository;
 
-    public Page<Item> getList(Pageable pageable) {
-        return itemRepository.findAllByStatusTag("EM_SORTEIO",pageable);
+    public Page<Item> getList(Long id, Pageable pageable) {
+        return itemRepository.findAllToViewApp("EM_SORTEIO", id, pageable);
     }
 
     public Item register(Item item) {

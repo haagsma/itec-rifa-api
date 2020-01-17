@@ -61,6 +61,5 @@ public class TicketService {
         } else {
             return ticketRepository.findByUserId(id);
         }
-
     }
 }

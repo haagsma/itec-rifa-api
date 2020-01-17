@@ -28,9 +28,9 @@ public class ItemController {
     @Autowired
     private TicketService ticketService;
 
-    @GetMapping("")
-    public ResponseEntity<?> getList(Pageable pageable) {
-        return new ResponseEntity<>(itemService.getList(pageable), HttpStatus.OK);
+    @GetMapping("/view-app/{id}")
+    public ResponseEntity<?> getList(@PathVariable Long id, Pageable pageable) {
+        return new ResponseEntity<>(itemService.getList(id, pageable), HttpStatus.OK);
     }
 
     @PostMapping("/register")
